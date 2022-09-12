@@ -1,12 +1,14 @@
 package tukpixm
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
+	"io"
 	"log"
+	"net/http"
 	"strings"
-
-	"github.com/ipthomas/tukhttp"
+	"time"
 
 	cnst "github.com/ipthomas/tukcnst"
 )
@@ -49,13 +51,17 @@ type PIXmResponse struct {
 	} `json:"entry"`
 }
 type PIXmQuery struct {
-	Count      int          `json:"count"`
-	PID        string       `json:"pid"`
-	PIDOID     string       `json:"pidoid"`
-	PIX_URL    string       `json:"pixurl"`
-	NHS_OID    string       `json:"nhsoid"`
-	Region_OID string       `json:"regionoid"`
-	Response   []PIXPatient `json:"response"`
+	Count        int          `json:"count"`
+	PID          string       `json:"pid"`
+	PIDOID       string       `json:"pidoid"`
+	PIX_URL      string       `json:"pixurl"`
+	NHS_OID      string       `json:"nhsoid"`
+	Region_OID   string       `json:"regionoid"`
+	Timeout      int64        `json:"timeout"`
+	StatusCode   int          `json:"statuscode"`
+	Response     []byte       `json:"response"`
+	PIXmResponse PIXmResponse `json:"pixmresponse"`
+	Patients     []PIXPatient `json:"patients"`
 }
 type PIXPatient struct {
 	PIDOID     string `json:"pidoid"`
@@ -83,27 +89,21 @@ func PDQ(i PIXmInterface) error {
 	return i.pdq()
 }
 func (i *PIXmQuery) pdq() error {
-	pixmreq := tukhttp.PIXmRequest{
-		URL:     i.PIX_URL,
-		PID_OID: i.PIDOID,
-		PID:     i.PID,
-	}
-	if err := tukhttp.NewRequest(&pixmreq); err != nil {
+	if err := i.newRequest(); err != nil {
 		return err
 	}
-	log.Println("Received PIXm Response")
-	if strings.Contains(string(pixmreq.Response), "Error") {
-		return errors.New(string(pixmreq.Response))
+	if strings.Contains(string(i.Response), "Error") {
+		return errors.New(string(i.Response))
 	}
-	pixmrsp := PIXmResponse{}
-	if err := json.Unmarshal(pixmreq.Response, &pixmrsp); err != nil {
+	i.PIXmResponse = PIXmResponse{}
+	if err := json.Unmarshal(i.Response, &i.PIXmResponse); err != nil {
 		return err
 	}
-	log.Printf("%v Patient Entries in Response", pixmrsp.Total)
-	i.Count = pixmrsp.Total
+	log.Printf("%v Patient Entries in Response", i.PIXmResponse.Total)
+	i.Count = i.PIXmResponse.Total
 	if i.Count > 0 {
-		for cnt := 0; cnt < len(pixmrsp.Entry); cnt++ {
-			rsppat := pixmrsp.Entry[cnt]
+		for cnt := 0; cnt < len(i.PIXmResponse.Entry); cnt++ {
+			rsppat := i.PIXmResponse.Entry[cnt]
 			tukpat := PIXPatient{}
 			for _, id := range rsppat.Resource.Identifier {
 				if id.System == cnst.URN_OID_PREFIX+i.Region_OID {
@@ -145,11 +145,51 @@ func (i *PIXmQuery) pdq() error {
 				tukpat.City = rsppat.Resource.Address[0].City
 				tukpat.Country = rsppat.Resource.Address[0].Country
 			}
-			i.Response = append(i.Response, tukpat)
+			i.Patients = append(i.Patients, tukpat)
 			log.Printf("Added Patient %s to response", tukpat.NHSID)
 		}
 	} else {
 		log.Println("patient is not registered")
 	}
 	return nil
+}
+func (i *PIXmQuery) newRequest() error {
+	if i.PID == "" || i.Region_OID == "" || i.PIX_URL == "" {
+		return errors.New("invalid request, not all mandated values provided in pixmquery (pid, region_oid and pix_url)")
+	}
+	if i.Timeout == 0 {
+		i.Timeout = 5
+	}
+	if i.NHS_OID == "" {
+		i.NHS_OID = "2.16.840.1.113883.2.1.4.1"
+	}
+	if i.PIDOID == "" && len(i.PID) == 10 {
+		i.PIDOID = i.NHS_OID
+	}
+	i.PIX_URL = i.PIX_URL + "?identifier=" + i.PIDOID + "%7C" + i.PID + cnst.FORMAT_JSON_PRETTY
+	req, _ := http.NewRequest(cnst.HTTP_GET, i.PIX_URL, nil)
+	req.Header.Set(cnst.CONTENT_TYPE, cnst.APPLICATION_JSON)
+	req.Header.Set(cnst.ACCEPT, cnst.ALL)
+	req.Header.Set(cnst.CONNECTION, cnst.KEEP_ALIVE)
+	i.logRequest(req.Header)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(i.Timeout)*time.Second)
+	defer cancel()
+	resp, err := http.DefaultClient.Do(req.WithContext(ctx))
+	if err != nil {
+		return err
+	}
+	i.StatusCode = resp.StatusCode
+	i.Response, err = io.ReadAll(resp.Body)
+	defer resp.Body.Close()
+	i.logResponse()
+	return err
+}
+func (i *PIXmQuery) logRequest(headers http.Header) {
+	log.Println("HTTP GET Request Headers")
+	b, _ := json.MarshalIndent(headers, "", "  ")
+	log.Println(string(b))
+	log.Printf("HTTP Request\nURL = %s", i.PIX_URL)
+}
+func (i *PIXmQuery) logResponse() {
+	log.Printf("HTML Response - Status Code = %v\n%s", i.StatusCode, string(i.Response))
 }

@@ -1,0 +1,3 @@
+# github.com/ipthomas/tukcnst v1.0.3
+## explicit; go 1.19
+github.com/ipthomas/tukcnst

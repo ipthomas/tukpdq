@@ -142,7 +142,7 @@
 // 2022/09/12 14:02:55.852455 tukpixm.go:112: Set Reg ID REG.1MWU5C92M2 2.16.840.1.113883.2.1.3.31.2.1.1
 // 2022/09/12 14:02:55.852546 tukpixm.go:149: Added Patient 9999999468 to response
 // 2022/09/12 14:02:55.852569 main.go:84: Patient Nhs Testpatient is registered
-package main
+package tukpixm
 
 import (
 	"context"
@@ -154,9 +154,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/aws/aws-lambda-go/events"
-	"github.com/aws/aws-lambda-go/lambda"
 	cnst "github.com/ipthomas/tukcnst"
+	// github.com/aws/aws-lambda-go
 )
 
 type PIXmResponse struct {
@@ -339,28 +338,30 @@ func (i *PIXmQuery) logRequest(headers http.Header) {
 func (i *PIXmQuery) logResponse() {
 	log.Printf("HTML Response - Status Code = %v\n%s", i.StatusCode, string(i.Response))
 }
-func main() {
-	lambda.Start(Handle_Request)
-}
-func Handle_Request(req events.APIGatewayProxyRequest) (*events.APIGatewayProxyResponse, error) {
-	log.SetFlags(log.Ldate | log.Ltime | log.Lmicroseconds | log.Lshortfile)
-	log.Printf("Processing API Gateway Proxy %s %s request", req.HTTPMethod, req.Path)
 
-	pdq := PIXmQuery{
-		PID:        req.QueryStringParameters["pid"],
-		Region_OID: req.QueryStringParameters["regionoid"],
-		PIX_URL:    req.QueryStringParameters["pixurl"],
-	}
-	if err := PDQ(&pdq); err != nil {
-		pdq.StatusCode = http.StatusInternalServerError
-		pdq.Response = []byte(err.Error())
-	}
-	return UnhandledRequest(pdq.StatusCode, pdq.Response)
-}
-func UnhandledRequest(status int, body interface{}) (*events.APIGatewayProxyResponse, error) {
-	resp := events.APIGatewayProxyResponse{Headers: map[string]string{cnst.CONTENT_TYPE: cnst.APPLICATION_JSON}}
-	resp.StatusCode = status
-	stringBody, _ := json.Marshal(body)
-	resp.Body = string(stringBody)
-	return &resp, nil
-}
+// functions to support AWS Lambda deployment. Uncomment and change package to main
+// func main() {
+// 	lambda.Start(Handle_Request)
+// }
+// func Handle_Request(req events.APIGatewayProxyRequest) (*events.APIGatewayProxyResponse, error) {
+// 	log.SetFlags(log.Ldate | log.Ltime | log.Lmicroseconds | log.Lshortfile)
+// 	log.Printf("Processing API Gateway Proxy %s %s request", req.HTTPMethod, req.Path)
+
+// 	pdq := PIXmQuery{
+// 		PID:        req.QueryStringParameters["pid"],
+// 		Region_OID: req.QueryStringParameters["regionoid"],
+// 		PIX_URL:    req.QueryStringParameters["pixurl"],
+// 	}
+// 	if err := PDQ(&pdq); err != nil {
+// 		pdq.StatusCode = http.StatusInternalServerError
+// 		pdq.Response = []byte(err.Error())
+// 	}
+// 	return UnhandledRequest(pdq.StatusCode, pdq.Response)
+// }
+// func UnhandledRequest(status int, body interface{}) (*events.APIGatewayProxyResponse, error) {
+// 	resp := events.APIGatewayProxyResponse{Headers: map[string]string{cnst.CONTENT_TYPE: cnst.APPLICATION_JSON}}
+// 	resp.StatusCode = status
+// 	stringBody, _ := json.Marshal(body)
+// 	resp.Body = string(stringBody)
+// 	return &resp, nil
+// }

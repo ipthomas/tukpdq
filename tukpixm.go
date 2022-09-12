@@ -339,7 +339,7 @@ func (i *PIXmQuery) logResponse() {
 	log.Printf("HTML Response - Status Code = %v\n%s", i.StatusCode, string(i.Response))
 }
 
-// functions to support AWS Lambda deployment. Uncomment and change package to main
+// functions to support AWS Lambda deployment. Uncomment and change package name from tukpixm to main
 // func main() {
 // 	lambda.Start(Handle_Request)
 // }

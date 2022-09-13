@@ -145,16 +145,13 @@
 package tukpixm
 
 import (
-	"context"
 	"encoding/json"
 	"errors"
-	"io"
 	"log"
-	"net/http"
 	"strings"
-	"time"
 
 	cnst "github.com/ipthomas/tukcnst"
+	"github.com/ipthomas/tukhttp"
 	// github.com/aws/aws-lambda-go
 )
 
@@ -311,32 +308,13 @@ func (i *PIXmQuery) newRequest() error {
 	if i.PIDOID == "" && len(i.PID) == 10 {
 		i.PIDOID = i.NHS_OID
 	}
-	i.PIX_URL = i.PIX_URL + "?identifier=" + i.PIDOID + "%7C" + i.PID + cnst.FORMAT_JSON_PRETTY
-	req, _ := http.NewRequest(cnst.HTTP_GET, i.PIX_URL, nil)
-	req.Header.Set(cnst.CONTENT_TYPE, cnst.APPLICATION_JSON)
-	req.Header.Set(cnst.ACCEPT, cnst.ALL)
-	req.Header.Set(cnst.CONNECTION, cnst.KEEP_ALIVE)
-	i.logRequest(req.Header)
-	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(i.Timeout)*time.Second)
-	defer cancel()
-	resp, err := http.DefaultClient.Do(req.WithContext(ctx))
-	if err != nil {
-		return err
+	httpReq := tukhttp.PIXmRequest{
+		URL:     i.PIX_URL,
+		PID_OID: i.PIDOID,
+		PID:     i.PID,
+		Timeout: 5,
 	}
-	i.StatusCode = resp.StatusCode
-	i.Response, err = io.ReadAll(resp.Body)
-	defer resp.Body.Close()
-	i.logResponse()
-	return err
-}
-func (i *PIXmQuery) logRequest(headers http.Header) {
-	log.Println("HTTP GET Request Headers")
-	b, _ := json.MarshalIndent(headers, "", "  ")
-	log.Println(string(b))
-	log.Printf("HTTP Request\nURL = %s", i.PIX_URL)
-}
-func (i *PIXmQuery) logResponse() {
-	log.Printf("HTML Response - Status Code = %v\n%s", i.StatusCode, string(i.Response))
+	return tukhttp.NewRequest(&httpReq)
 }
 
 // functions to support AWS Lambda deployment. Uncomment and change package name from tukpixm to main

@@ -880,8 +880,10 @@ func (i *PDQQuery) newTukHttpRequest() error {
 		PID:     i.PDQ_ID,
 		Timeout: i.Timeout,
 	}
+	err := tukhttp.NewRequest(&httpReq)
 	i.Request = []byte(httpReq.URL)
-	return tukhttp.NewRequest(&httpReq)
+	i.Response = httpReq.Response
+	return err
 }
 func (i *PDQQuery) newTukSOAPRequest() error {
 	httpReq := tukhttp.SOAPRequest{
@@ -889,7 +891,9 @@ func (i *PDQQuery) newTukSOAPRequest() error {
 		Body:    i.Request,
 		Timeout: i.Timeout,
 	}
-	return tukhttp.NewRequest(&httpReq)
+	err := tukhttp.NewRequest(&httpReq)
+	i.Response = httpReq.Response
+	return err
 }
 
 // functions to support AWS Lambda deployment. Uncomment and change package name from tukpixm to main

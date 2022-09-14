@@ -815,6 +815,7 @@ func (i *PDQQuery) getPatient() error {
 		}
 		pdqrsp := PIXmResponse{}
 		if err := json.Unmarshal(i.Response, &pdqrsp); err != nil {
+			log.Println("Error unmarshalling i.Response")
 			return err
 		}
 		log.Printf("%v Patient Entries in Response", pdqrsp.Total)

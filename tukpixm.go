@@ -1,4 +1,4 @@
-// tukpixm provides a golang implementtion of an IHE PIXm PDQ Client
+// tukpixm provides a golang implementtion of an IHE PIXm,IHE PIXv3 and IHE PDQv3 Client Consumers
 //
 // There is currently no authentication implemented. The func (i *PIXmQuery) newRequest() error is used to handle the http request/response and should be amended according to your authentication requirements
 //
@@ -157,7 +157,6 @@ import (
 	cnst "github.com/ipthomas/tukcnst"
 	"github.com/ipthomas/tukhttp"
 	util "github.com/ipthomas/tukutil"
-	// github.com/aws/aws-lambda-go
 )
 
 type PDQQuery struct {
@@ -895,30 +894,3 @@ func (i *PDQQuery) newTukSOAPRequest() error {
 	i.Response = httpReq.Response
 	return err
 }
-
-// functions to support AWS Lambda deployment. Uncomment and change package name from tukpixm to main
-// func main() {
-// 	lambda.Start(Handle_Request)
-// }
-// func Handle_Request(req events.APIGatewayProxyRequest) (*events.APIGatewayProxyResponse, error) {
-// 	log.SetFlags(log.Ldate | log.Ltime | log.Lmicroseconds | log.Lshortfile)
-// 	log.Printf("Processing API Gateway Proxy %s %s request", req.HTTPMethod, req.Path)
-
-// 	pdq := PIXmQuery{
-// 		PID:        req.QueryStringParameters["pid"],
-// 		Region_OID: req.QueryStringParameters["regionoid"],
-// 		PIX_URL:    req.QueryStringParameters["pixurl"],
-// 	}
-// 	if err := PDQ(&pdq); err != nil {
-// 		pdq.StatusCode = http.StatusInternalServerError
-// 		pdq.Response = []byte(err.Error())
-// 	}
-// 	return UnhandledRequest(pdq.StatusCode, pdq.Response)
-// }
-// func UnhandledRequest(status int, body interface{}) (*events.APIGatewayProxyResponse, error) {
-// 	resp := events.APIGatewayProxyResponse{Headers: map[string]string{cnst.CONTENT_TYPE: cnst.APPLICATION_JSON}}
-// 	resp.StatusCode = status
-// 	stringBody, _ := json.Marshal(body)
-// 	resp.Body = string(stringBody)
-// 	return &resp, nil
-// }

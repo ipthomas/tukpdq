@@ -767,9 +767,6 @@ func (i *PDQQuery) getPatient() error {
 							return errors.New("acknowledgement code not equal aa, received " + pdqrsp.Body.PRPAIN201310UV02.Acknowledgement.TypeCode.Code)
 						}
 						i.Count, _ = strconv.Atoi(pdqrsp.Body.PRPAIN201310UV02.ControlActProcess.QueryAck.ResultTotalQuantity.Value)
-						if i.Count != 1 {
-							return errors.New("no unique patient returned from query")
-						}
 						pat := PIXPatient{}
 						pat.GivenName = pdqrsp.Body.PRPAIN201310UV02.ControlActProcess.Subject.RegistrationEvent.Subject1.Patient.PatientPerson.Name.Given
 						pat.FamilyName = pdqrsp.Body.PRPAIN201310UV02.ControlActProcess.Subject.RegistrationEvent.Subject1.Patient.PatientPerson.Name.Family
@@ -790,9 +787,6 @@ func (i *PDQQuery) getPatient() error {
 							return errors.New("acknowledgement code not equal aa, received " + pdqrsp.Body.PRPAIN201306UV02.Acknowledgement.TypeCode.Code)
 						}
 						i.Count, _ = strconv.Atoi(pdqrsp.Body.PRPAIN201306UV02.ControlActProcess.QueryAck.ResultTotalQuantity.Value)
-						if i.Count != 1 {
-							return errors.New("no unique patient returned from query")
-						}
 						pat := PIXPatient{}
 						pat.GivenName = pdqrsp.Body.PRPAIN201306UV02.ControlActProcess.Subject.RegistrationEvent.Subject1.Patient.PatientPerson.Name.Given
 						pat.FamilyName = pdqrsp.Body.PRPAIN201306UV02.ControlActProcess.Subject.RegistrationEvent.Subject1.Patient.PatientPerson.Name.Family

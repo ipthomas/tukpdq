@@ -26,7 +26,7 @@ Struct PDQQuery implements the tukpixm.PDQ interface
 }
 	Server must be set to either "pixm" to perform a IHE PIXm query or "pixv3" to perform an IHE PIXv3 query or "pdqv3" to perform an IHE PDQv3 query. The github.com/ipthomas/tukcnst provides constants for each of the valid Server values i.e. tukcnst.PIXm, tukcnst.PIXv3, tukcnst.PDQv3, or you can just use strings!
 	
-	A patient identifier is required for use in the PDQ. This can be either the MRN id along with the associated OID or the NHS ID (if no NHS OID is provided the NHS assigned OID is used) or the XDS regional ID
+	A patient identifier is required for use in the PDQ. This can be either the MRN id along with the associated OID or the NHS ID or the XDS regional ID
 
 	 The REG_OID is the Regional/XDS OID and is required
 	 

@@ -878,6 +878,7 @@ func (i *PDQQuery) newTukHttpRequest() error {
 	err := tukhttp.NewRequest(&httpReq)
 	i.Request = []byte(httpReq.URL)
 	i.Response = httpReq.Response
+	i.StatusCode = httpReq.StatusCode
 	return err
 }
 func (i *PDQQuery) newTukSOAPRequest() error {
@@ -888,5 +889,6 @@ func (i *PDQQuery) newTukSOAPRequest() error {
 	}
 	err := tukhttp.NewRequest(&httpReq)
 	i.Response = httpReq.Response
+	i.StatusCode = httpReq.StatusCode
 	return err
 }

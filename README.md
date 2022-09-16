@@ -34,8 +34,7 @@ Struct PDQQuery implements the tukpixm.PDQ interface
 
 	 Timeout is the http context timeout in seconds and is optional. Default is 5 secs
 
-	 PDQ_ID will be set to the ID used for the query
-	 PDQ_OID will be set to the OID used for the query
+	 Used_ID will be set to the ID used for the query
 	 
 	 Count will equal the number of patients found matching the query
 	 Response will contain the PIXm response in []byte format

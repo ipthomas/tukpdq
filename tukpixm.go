@@ -761,7 +761,7 @@ func (i *PDQQuery) getPatient() error {
 			var b bytes.Buffer
 			if err = tmplt.Execute(&b, i); err == nil {
 				i.Request = b.Bytes()
-				if err = i.newTukSOAPRequest("urn:hl7-org:v3:PRPA_IN201309UV02"); err == nil {
+				if err = i.newTukSOAPRequest(cnst.SOAP_ACTION_PIXV3_Request); err == nil {
 					pdqrsp := PIXv3Response{}
 					if err = json.Unmarshal(i.Response, &pdqrsp); err == nil {
 						if pdqrsp.Body.PRPAIN201310UV02.Acknowledgement.TypeCode.Code != "AA" {
@@ -781,7 +781,7 @@ func (i *PDQQuery) getPatient() error {
 			var b bytes.Buffer
 			if err = tmplt.Execute(&b, i); err == nil {
 				i.Request = b.Bytes()
-				if err = i.newTukSOAPRequest("urn:hl7-org:v3:PRPA_IN201305UV02"); err == nil {
+				if err = i.newTukSOAPRequest(cnst.SOAP_ACTION_PDQV3_Request); err == nil {
 					pdqrsp := PDQv3Response{}
 					if err = json.Unmarshal(i.Response, &pdqrsp); err == nil {
 						if pdqrsp.Body.PRPAIN201306UV02.Acknowledgement.TypeCode.Code != "AA" {

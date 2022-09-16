@@ -749,6 +749,7 @@ func (i *PDQQuery) setPDQ_ID() error {
 	if i.PDQ_ID == "" || i.PDQ_OID == "" {
 		return errors.New("invalid request - no suitable id and oid input values found which can be used for pdq query")
 	}
+	i.Used_PID = i.PDQ_ID
 	return nil
 }
 func (i *PDQQuery) getPatient() error {

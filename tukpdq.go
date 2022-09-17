@@ -761,7 +761,7 @@ func (i *PDQQuery) getPatient() error {
 				i.Request = b.Bytes()
 				if err = i.newTukSOAPRequest(cnst.SOAP_ACTION_PIXV3_Request); err == nil {
 					pdqrsp := PIXv3Response{}
-					if err = json.Unmarshal(i.Response, &pdqrsp); err == nil {
+					if err = xml.Unmarshal(i.Response, &pdqrsp); err == nil {
 						if pdqrsp.Body.PRPAIN201310UV02.Acknowledgement.TypeCode.Code != "AA" {
 							return errors.New("acknowledgement code not equal aa, received " + pdqrsp.Body.PRPAIN201310UV02.Acknowledgement.TypeCode.Code)
 						}
@@ -793,7 +793,7 @@ func (i *PDQQuery) getPatient() error {
 				i.Request = b.Bytes()
 				if err = i.newTukSOAPRequest(cnst.SOAP_ACTION_PDQV3_Request); err == nil {
 					pdqrsp := PDQv3Response{}
-					if err = json.Unmarshal(i.Response, &pdqrsp); err == nil {
+					if err = xml.Unmarshal(i.Response, &pdqrsp); err == nil {
 						if pdqrsp.Body.PRPAIN201306UV02.Acknowledgement.TypeCode.Code != "AA" {
 							return errors.New("acknowledgement code not equal aa, received " + pdqrsp.Body.PRPAIN201306UV02.Acknowledgement.TypeCode.Code)
 						}

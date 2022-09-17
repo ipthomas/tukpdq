@@ -770,9 +770,21 @@ func (i *PDQQuery) getPatient() error {
 						pat.GivenName = pdqrsp.Body.PRPAIN201310UV02.ControlActProcess.Subject.RegistrationEvent.Subject1.Patient.PatientPerson.Name.Given
 						pat.FamilyName = pdqrsp.Body.PRPAIN201310UV02.ControlActProcess.Subject.RegistrationEvent.Subject1.Patient.PatientPerson.Name.Family
 						i.Patients = append(i.Patients, pat)
+					} else {
+						log.Println(err.Error())
+						return err
 					}
+				} else {
+					log.Println(err.Error())
+					return err
 				}
+			} else {
+				log.Println(err.Error())
+				return err
 			}
+		} else {
+			log.Println(err.Error())
+			return err
 		}
 	case cnst.PDQv3:
 		if tmplt, err = template.New(cnst.PDQv3).Funcs(util.TemplateFuncMap()).Parse(PDQ_V3_Request_Template); err == nil {
@@ -795,9 +807,21 @@ func (i *PDQQuery) getPatient() error {
 						pat.State = pdqrsp.Body.PRPAIN201306UV02.ControlActProcess.Subject.RegistrationEvent.Subject1.Patient.PatientPerson.Addr.State
 						pat.Street = pdqrsp.Body.PRPAIN201306UV02.ControlActProcess.Subject.RegistrationEvent.Subject1.Patient.PatientPerson.Addr.StreetAddressLine
 						i.Patients = append(i.Patients, pat)
+					} else {
+						log.Println(err.Error())
+						return err
 					}
+				} else {
+					log.Println(err.Error())
+					return err
 				}
+			} else {
+				log.Println(err.Error())
+				return err
 			}
+		} else {
+			log.Println(err.Error())
+			return err
 		}
 	case cnst.PIXm:
 		if err := i.newTukHttpRequest(); err != nil {

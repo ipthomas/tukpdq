@@ -1,4 +1,4 @@
-module github.com/ipthomas/tukpixm
+module github.com/ipthomas/tukpdq
 
 go 1.19
 

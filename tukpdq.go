@@ -160,21 +160,21 @@ import (
 )
 
 type PDQQuery struct {
-	Server       string
-	MRN_ID       string
-	MRN_OID      string
-	NHS_ID       string
-	NHS_OID      string
-	REG_ID       string
-	REG_OID      string
-	Server_URL   string
-	Timeout      int64
-	Used_PID     string
-	Used_PID_OID string
-	Request      []byte
-	Response     []byte
-	StatusCode   int
-	Count        int
+	Server       string       `json:"server"`
+	MRN_ID       string       `json:"mrnid"`
+	MRN_OID      string       `json:"mrnoid"`
+	NHS_ID       string       `json:"nhsid"`
+	NHS_OID      string       `json:"nhsoid"`
+	REG_ID       string       `json:"regid"`
+	REG_OID      string       `json:"regoid"`
+	Server_URL   string       `json:"serverurl"`
+	Timeout      int64        `json:"timeout"`
+	Used_PID     string       `json:"usedpid"`
+	Used_PID_OID string       `json:"usedpidoid"`
+	Request      []byte       `json:"request"`
+	Response     []byte       `json:"response"`
+	StatusCode   int          `json:"statuscode"`
+	Count        int          `json:"count"`
 	Patients     []PIXPatient `json:"patients"`
 }
 

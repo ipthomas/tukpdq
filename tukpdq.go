@@ -161,26 +161,26 @@ import (
 )
 
 type PDQQuery struct {
-	Server       string
-	Server_URL   string
-	X_Api_Key    string
-	NHS_ID       string
-	NHS_OID      string
-	MRN_ID       string
-	MRN_OID      string
-	REG_ID       string
-	REG_OID      string
-	Timeout      int64
-	Cache        bool
-	RspType      string
-	Used_PID     string
-	Used_PID_OID string
-	Request      []byte
-	Response     []byte
-	StatusCode   int
-	Count        int
-	Patients     []PIXPatient
-	CGL_User     CGL_User
+	Server        string
+	Server_URL    string
+	CGL_X_Api_Key string
+	NHS_ID        string
+	NHS_OID       string
+	MRN_ID        string
+	MRN_OID       string
+	REG_ID        string
+	REG_OID       string
+	Timeout       int64
+	Cache         bool
+	RspType       string
+	Used_PID      string
+	Used_PID_OID  string
+	Request       []byte
+	Response      []byte
+	StatusCode    int
+	Count         int
+	Patients      []PIXPatient
+	CGL_User      CGL_User
 }
 type CGL_User struct {
 	Data struct {
@@ -1080,7 +1080,7 @@ func (i *PDQQuery) getPatient() error {
 func (i *PDQQuery) newCGLRequest() error {
 	httpReq := tukhttp.CGLRequest{
 		Request:   i.Server_URL,
-		X_Api_Key: i.X_Api_Key,
+		X_Api_Key: i.CGL_X_Api_Key,
 	}
 	err := tukhttp.NewRequest(&httpReq)
 	i.Request = []byte(i.Request)

@@ -27,6 +27,7 @@ const (
 	QUERY_PARAM_RESPONSE_TYPE       = "rsptype"
 	QUERY_PARAM_CACHE               = "cache"
 	QUERY_PARAM_RSP_TYPE            = "rsptype"
+	AWS_ENV_CGL_X_API_KEY           = "CGL_API_KEY"
 	AWS_ENV_RESPONSE_TYPE           = "RSP_TYPE"
 	AWS_ENV_RESPONSE_TYPE_HTTP_CODE = "code"
 	AWS_ENV_RESPONSE_TYPE_BOOL      = "bool"

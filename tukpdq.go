@@ -161,26 +161,27 @@ import (
 )
 
 type PDQQuery struct {
-	Server        string
-	Server_URL    string
-	CGL_X_Api_Key string
-	NHS_ID        string
-	NHS_OID       string
-	MRN_ID        string
-	MRN_OID       string
-	REG_ID        string
-	REG_OID       string
-	Timeout       int64
-	Cache         bool
-	RspType       string
-	Used_PID      string
-	Used_PID_OID  string
-	Request       []byte
-	Response      []byte
-	StatusCode    int
-	Count         int
-	Patients      []PIXPatient
-	CGL_User      CGL_User
+	IHE_Server_Type string
+	Server_URL      string
+	CGL_Server_URL  string
+	CGL_X_Api_Key   string
+	NHS_ID          string
+	NHS_OID         string
+	MRN_ID          string
+	MRN_OID         string
+	REG_ID          string
+	REG_OID         string
+	Timeout         int64
+	Cache           bool
+	RspType         string
+	Used_PID        string
+	Used_PID_OID    string
+	Request         []byte
+	Response        []byte
+	StatusCode      int
+	Count           int
+	Patients        []PIXPatient
+	CGL_User        CGL_User
 }
 type CGL_User struct {
 	Data struct {
@@ -903,7 +904,7 @@ func (i *PDQQuery) getPatient() error {
 	var tmplt *template.Template
 	var err error
 	i.StatusCode = http.StatusOK
-	switch i.Server {
+	switch i.IHE_Server_Type {
 	case tukcnst.PDQ_SERVER_TYPE_CGL:
 		return i.newCGLRequest()
 	case tukcnst.PDQ_SERVER_TYPE_IHE_PIXV3:

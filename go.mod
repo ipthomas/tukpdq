@@ -3,8 +3,8 @@ module github.com/ipthomas/tukpdq
 go 1.19
 
 require (
-	github.com/ipthomas/tukcnst v1.2.7
-	github.com/ipthomas/tukhttp v1.2.4
+	github.com/ipthomas/tukcnst v1.2.8
+	github.com/ipthomas/tukhttp v1.2.8
 	github.com/ipthomas/tukutil v1.2.3
 )
 

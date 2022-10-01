@@ -204,101 +204,101 @@ type CGL_User struct {
 					Family string `json:"family"`
 					Given  string `json:"given"`
 				} `json:"name"`
-				NextCGLAppointmentDate interface{} `json:"nextCGLAppointmentDate"`
-				NhsNumber              string      `json:"nhsNumber"`
-				SexAtBirth             string      `json:"sexAtBirth"`
+				NextCGLAppointmentDate string `json:"nextCGLAppointmentDate"`
+				NhsNumber              string `json:"nhsNumber"`
+				SexAtBirth             string `json:"sexAtBirth"`
 			} `json:"basicDetails"`
 			BbvInformation struct {
-				BbvTested        string      `json:"bbvTested"`
-				HepCLastTestDate interface{} `json:"hepCLastTestDate"`
-				HepCResult       interface{} `json:"hepCResult"`
-				HivPositive      interface{} `json:"hivPositive"`
+				BbvTested        string `json:"bbvTested"`
+				HepCLastTestDate string `json:"hepCLastTestDate"`
+				HepCResult       string `json:"hepCResult"`
+				HivPositive      string `json:"hivPositive"`
 			} `json:"bbvInformation"`
 			DrugTestResults struct {
-				DrugTestDate          interface{} `json:"drugTestDate"`
-				DrugTestSample        interface{} `json:"drugTestSample"`
-				DrugTestStatus        interface{} `json:"drugTestStatus"`
-				InstantOrConfirmation interface{} `json:"instantOrConfirmation"`
+				DrugTestDate          string `json:"drugTestDate"`
+				DrugTestSample        string `json:"drugTestSample"`
+				DrugTestStatus        string `json:"drugTestStatus"`
+				InstantOrConfirmation string `json:"instantOrConfirmation"`
 				Results               struct {
-					Amphetamine     interface{} `json:"amphetamine"`
-					Benzodiazepine  interface{} `json:"benzodiazepine"`
-					Buprenorphine   interface{} `json:"buprenorphine"`
-					Cannabis        interface{} `json:"cannabis"`
-					Cocaine         interface{} `json:"cocaine"`
-					Eddp            interface{} `json:"eddp"`
-					Fentanyl        interface{} `json:"fentanyl"`
-					Ketamine        interface{} `json:"ketamine"`
-					Methadone       interface{} `json:"methadone"`
-					Methamphetamine interface{} `json:"methamphetamine"`
-					Morphine        interface{} `json:"morphine"`
-					Opiates         interface{} `json:"opiates"`
-					SixMam          interface{} `json:"sixMam"`
-					Tramadol        interface{} `json:"tramadol"`
+					Amphetamine     string `json:"amphetamine"`
+					Benzodiazepine  string `json:"benzodiazepine"`
+					Buprenorphine   string `json:"buprenorphine"`
+					Cannabis        string `json:"cannabis"`
+					Cocaine         string `json:"cocaine"`
+					Eddp            string `json:"eddp"`
+					Fentanyl        string `json:"fentanyl"`
+					Ketamine        string `json:"ketamine"`
+					Methadone       string `json:"methadone"`
+					Methamphetamine string `json:"methamphetamine"`
+					Morphine        string `json:"morphine"`
+					Opiates         string `json:"opiates"`
+					SixMam          string `json:"sixMam"`
+					Tramadol        string `json:"tramadol"`
 				} `json:"results"`
 			} `json:"drugTestResults"`
-			PrescribingInformation []interface{} `json:"prescribingInformation"`
+			PrescribingInformation []string `json:"prescribingInformation"`
 			RiskInformation        struct {
-				LastSelfReportedDate interface{} `json:"lastSelfReportedDate"`
+				LastSelfReportedDate string `json:"lastSelfReportedDate"`
 				MentalHealthDomain   struct {
-					AttemptedSuicide                            interface{} `json:"attemptedSuicide"`
-					CurrentOrPreviousSelfHarm                   interface{} `json:"currentOrPreviousSelfHarm"`
-					DiagnosedMentalHealthCondition              interface{} `json:"diagnosedMentalHealthCondition"`
-					FrequentLifeThreateningSelfHarm             interface{} `json:"frequentLifeThreateningSelfHarm"`
-					Hallucinations                              interface{} `json:"hallucinations"`
-					HospitalAdmissionsForMentalHealth           interface{} `json:"hospitalAdmissionsForMentalHealth"`
-					NoIdentifiedRisk                            interface{} `json:"noIdentifiedRisk"`
-					NotEngagingWithSupport                      interface{} `json:"notEngagingWithSupport"`
-					NotTakingPrescribedMedicationAsInstructed   interface{} `json:"notTakingPrescribedMedicationAsInstructed"`
-					PsychiatricOrPreviousCrisisTeamIntervention interface{} `json:"psychiatricOrPreviousCrisisTeamIntervention"`
-					Psychosis                                   interface{} `json:"psychosis"`
-					SelfReportedMentalHealthConcerns            string      `json:"selfReportedMentalHealthConcerns"`
-					ThoughtsOfSuicideOrSelfHarm                 interface{} `json:"thoughtsOfSuicideOrSelfHarm"`
+					AttemptedSuicide                            string `json:"attemptedSuicide"`
+					CurrentOrPreviousSelfHarm                   string `json:"currentOrPreviousSelfHarm"`
+					DiagnosedMentalHealthCondition              string `json:"diagnosedMentalHealthCondition"`
+					FrequentLifeThreateningSelfHarm             string `json:"frequentLifeThreateningSelfHarm"`
+					Hallucinations                              string `json:"hallucinations"`
+					HospitalAdmissionsForMentalHealth           string `json:"hospitalAdmissionsForMentalHealth"`
+					NoIdentifiedRisk                            string `json:"noIdentifiedRisk"`
+					NotEngagingWithSupport                      string `json:"notEngagingWithSupport"`
+					NotTakingPrescribedMedicationAsInstructed   string `json:"notTakingPrescribedMedicationAsInstructed"`
+					PsychiatricOrPreviousCrisisTeamIntervention string `json:"psychiatricOrPreviousCrisisTeamIntervention"`
+					Psychosis                                   string `json:"psychosis"`
+					SelfReportedMentalHealthConcerns            string `json:"selfReportedMentalHealthConcerns"`
+					ThoughtsOfSuicideOrSelfHarm                 string `json:"thoughtsOfSuicideOrSelfHarm"`
 				} `json:"mentalHealthDomain"`
 				RiskOfHarmToSelfDomain struct {
-					AssessedAsNotHavingMentalCapacity  interface{} `json:"assessedAsNotHavingMentalCapacity"`
-					BeliefTheyAreWorthless             string      `json:"beliefTheyAreWorthless"`
-					Hoarding                           interface{} `json:"hoarding"`
-					LearningDisability                 interface{} `json:"learningDisability"`
-					MeetsSafeguardingAdultsThreshold   interface{} `json:"meetsSafeguardingAdultsThreshold"`
-					NoIdentifiedRisk                   interface{} `json:"noIdentifiedRisk"`
-					OngoingConcernsRelatingToOwnSafety interface{} `json:"ongoingConcernsRelatingToOwnSafety"`
-					ProblemsMaintainingPersonalHygiene interface{} `json:"problemsMaintainingPersonalHygiene"`
-					ProblemsMeetingNutritionalNeeds    interface{} `json:"problemsMeetingNutritionalNeeds"`
-					RequiresIndependentAdvocacy        interface{} `json:"requiresIndependentAdvocacy"`
-					SelfNeglect                        string      `json:"selfNeglect"`
+					AssessedAsNotHavingMentalCapacity  string `json:"assessedAsNotHavingMentalCapacity"`
+					BeliefTheyAreWorthless             string `json:"beliefTheyAreWorthless"`
+					Hoarding                           string `json:"hoarding"`
+					LearningDisability                 string `json:"learningDisability"`
+					MeetsSafeguardingAdultsThreshold   string `json:"meetsSafeguardingAdultsThreshold"`
+					NoIdentifiedRisk                   string `json:"noIdentifiedRisk"`
+					OngoingConcernsRelatingToOwnSafety string `json:"ongoingConcernsRelatingToOwnSafety"`
+					ProblemsMaintainingPersonalHygiene string `json:"problemsMaintainingPersonalHygiene"`
+					ProblemsMeetingNutritionalNeeds    string `json:"problemsMeetingNutritionalNeeds"`
+					RequiresIndependentAdvocacy        string `json:"requiresIndependentAdvocacy"`
+					SelfNeglect                        string `json:"selfNeglect"`
 				} `json:"riskOfHarmToSelfDomain"`
 				SocialDomain struct {
-					FinancialProblems         interface{} `json:"financialProblems"`
-					HomelessRoughSleepingNFA  interface{} `json:"homelessRoughSleepingNFA"`
-					HousingAtRisk             interface{} `json:"housingAtRisk"`
-					NoIdentifiedRisk          string      `json:"noIdentifiedRisk"`
-					SociallyIsolatedNoSupport interface{} `json:"sociallyIsolatedNoSupport"`
+					FinancialProblems         string `json:"financialProblems"`
+					HomelessRoughSleepingNFA  string `json:"homelessRoughSleepingNFA"`
+					HousingAtRisk             string `json:"housingAtRisk"`
+					NoIdentifiedRisk          string `json:"noIdentifiedRisk"`
+					SociallyIsolatedNoSupport string `json:"sociallyIsolatedNoSupport"`
 				} `json:"socialDomain"`
 				SubstanceMisuseDomain struct {
-					ConfusionOrDisorientation interface{} `json:"ConfusionOrDisorientation"`
-					AdmissionToAandE          interface{} `json:"admissionToAandE"`
-					BlackoutOrSeizures        interface{} `json:"blackoutOrSeizures"`
-					ConcurrentUse             interface{} `json:"concurrentUse"`
-					HigherRiskDrinking        interface{} `json:"higherRiskDrinking"`
-					InjectedByOthers          interface{} `json:"injectedByOthers"`
-					Injecting                 string      `json:"injecting"`
-					InjectingInNeckOrGroin    string      `json:"injectingInNeckOrGroin"`
-					NoIdentifiedRisk          interface{} `json:"noIdentifiedRisk"`
-					PolyDrugUse               string      `json:"polyDrugUse"`
-					PreviousOverDose          interface{} `json:"previousOverDose"`
-					RecentPrisonRelease       interface{} `json:"recentPrisonRelease"`
-					ReducedTolerance          interface{} `json:"reducedTolerance"`
-					SharingWorks              interface{} `json:"sharingWorks"`
-					Speedballing              interface{} `json:"speedballing"`
-					UsingOnTop                string      `json:"usingOnTop"`
+					ConfusionOrDisorientation string `json:"ConfusionOrDisorientation"`
+					AdmissionToAandE          string `json:"admissionToAandE"`
+					BlackoutOrSeizures        string `json:"blackoutOrSeizures"`
+					ConcurrentUse             string `json:"concurrentUse"`
+					HigherRiskDrinking        string `json:"higherRiskDrinking"`
+					InjectedByOthers          string `json:"injectedByOthers"`
+					Injecting                 string `json:"injecting"`
+					InjectingInNeckOrGroin    string `json:"injectingInNeckOrGroin"`
+					NoIdentifiedRisk          string `json:"noIdentifiedRisk"`
+					PolyDrugUse               string `json:"polyDrugUse"`
+					PreviousOverDose          string `json:"previousOverDose"`
+					RecentPrisonRelease       string `json:"recentPrisonRelease"`
+					ReducedTolerance          string `json:"reducedTolerance"`
+					SharingWorks              string `json:"sharingWorks"`
+					Speedballing              string `json:"speedballing"`
+					UsingOnTop                string `json:"usingOnTop"`
 				} `json:"substanceMisuseDomain"`
 			} `json:"riskInformation"`
 			SafeguardingInformation struct {
-				LastReviewDate     interface{} `json:"lastReviewDate"`
-				RiskHarmFromOthers string      `json:"riskHarmFromOthers"`
-				RiskToAdults       interface{} `json:"riskToAdults"`
-				RiskToChildrenOrYP interface{} `json:"riskToChildrenOrYP"`
-				RiskToSelf         string      `json:"riskToSelf"`
+				LastReviewDate     string `json:"lastReviewDate"`
+				RiskHarmFromOthers string `json:"riskHarmFromOthers"`
+				RiskToAdults       string `json:"riskToAdults"`
+				RiskToChildrenOrYP string `json:"riskToChildrenOrYP"`
+				RiskToSelf         string `json:"riskToSelf"`
 			} `json:"safeguardingInformation"`
 		} `json:"client"`
 		KeyWorker struct {

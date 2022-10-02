@@ -920,7 +920,14 @@ func (i *PDQQuery) getPatient() error {
 						}
 						i.Count, _ = strconv.Atoi(pdqrsp.Body.PRPAIN201310UV02.ControlActProcess.QueryAck.ResultTotalQuantity.Value)
 						if i.Count > 0 {
-							pat := PIXPatient{}
+							pat := PIXPatient{
+								PIDOID: i.MRN_OID,
+								PID:    i.MRN_ID,
+								REGOID: i.REG_OID,
+								REGID:  i.REG_ID,
+								NHSOID: i.NHS_OID,
+								NHSID:  i.NHS_ID,
+							}
 							pat.GivenName = pdqrsp.Body.PRPAIN201310UV02.ControlActProcess.Subject.RegistrationEvent.Subject1.Patient.PatientPerson.Name.Given
 							pat.FamilyName = pdqrsp.Body.PRPAIN201310UV02.ControlActProcess.Subject.RegistrationEvent.Subject1.Patient.PatientPerson.Name.Family
 							i.Patients = append(i.Patients, pat)
@@ -962,14 +969,32 @@ func (i *PDQQuery) getPatient() error {
 						}
 						i.Count, _ = strconv.Atoi(pdqrsp.Body.PRPAIN201306UV02.ControlActProcess.QueryAck.ResultTotalQuantity.Value)
 						if i.Count > 0 {
-							pat := PIXPatient{}
-							pat.GivenName = pdqrsp.Body.PRPAIN201306UV02.ControlActProcess.Subject.RegistrationEvent.Subject1.Patient.PatientPerson.Name.Given
-							pat.FamilyName = pdqrsp.Body.PRPAIN201306UV02.ControlActProcess.Subject.RegistrationEvent.Subject1.Patient.PatientPerson.Name.Family
-							pat.BirthDate = pdqrsp.Body.PRPAIN201306UV02.ControlActProcess.Subject.RegistrationEvent.Subject1.Patient.PatientPerson.BirthTime.Value
-							pat.Zip = pdqrsp.Body.PRPAIN201306UV02.ControlActProcess.Subject.RegistrationEvent.Subject1.Patient.PatientPerson.Addr.PostalCode
-							pat.City = pdqrsp.Body.PRPAIN201306UV02.ControlActProcess.Subject.RegistrationEvent.Subject1.Patient.PatientPerson.Addr.City
-							pat.State = pdqrsp.Body.PRPAIN201306UV02.ControlActProcess.Subject.RegistrationEvent.Subject1.Patient.PatientPerson.Addr.State
-							pat.Street = pdqrsp.Body.PRPAIN201306UV02.ControlActProcess.Subject.RegistrationEvent.Subject1.Patient.PatientPerson.Addr.StreetAddressLine
+							pat := PIXPatient{
+								PIDOID:     i.MRN_OID,
+								PID:        i.MRN_ID,
+								REGOID:     i.REG_OID,
+								REGID:      i.REG_ID,
+								NHSOID:     i.NHS_OID,
+								NHSID:      i.NHS_ID,
+								GivenName:  pdqrsp.Body.PRPAIN201306UV02.ControlActProcess.Subject.RegistrationEvent.Subject1.Patient.PatientPerson.Name.Given,
+								FamilyName: pdqrsp.Body.PRPAIN201306UV02.ControlActProcess.Subject.RegistrationEvent.Subject1.Patient.PatientPerson.Name.Family,
+								Gender:     pdqrsp.Body.PRPAIN201306UV02.ControlActProcess.Subject.RegistrationEvent.Subject1.Patient.PatientPerson.AdministrativeGenderCode.Code,
+								BirthDate:  pdqrsp.Body.PRPAIN201306UV02.ControlActProcess.Subject.RegistrationEvent.Subject1.Patient.PatientPerson.BirthTime.Value,
+								Street:     pdqrsp.Body.PRPAIN201306UV02.ControlActProcess.Subject.RegistrationEvent.Subject1.Patient.PatientPerson.Addr.StreetAddressLine,
+								City:       pdqrsp.Body.PRPAIN201306UV02.ControlActProcess.Subject.RegistrationEvent.Subject1.Patient.PatientPerson.Addr.City,
+								State:      pdqrsp.Body.PRPAIN201306UV02.ControlActProcess.Subject.RegistrationEvent.Subject1.Patient.PatientPerson.Addr.State,
+								Zip:        pdqrsp.Body.PRPAIN201306UV02.ControlActProcess.Subject.RegistrationEvent.Subject1.Patient.PatientPerson.Addr.PostalCode,
+							}
+							for _, pid := range pdqrsp.Body.PRPAIN201306UV02.ControlActProcess.Subject.RegistrationEvent.Subject1.Patient.ID {
+								switch pid.Root {
+								case i.REG_OID:
+									i.REG_ID = pid.Extension
+								case i.NHS_OID:
+									i.NHS_ID = pid.Extension
+								case i.MRN_OID:
+									i.MRN_ID = pid.Extension
+								}
+							}
 							i.Patients = append(i.Patients, pat)
 							if i.Cache {
 								pat_cache[i.Used_PID] = i.Response

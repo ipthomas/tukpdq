@@ -16,6 +16,8 @@ github.com/ipthomas/tukcnst v1.2.10 h1:8W7TkJqIXy9zhHUFUd5OZlUbmhd0ERv7leayxdp5z
 github.com/ipthomas/tukcnst v1.2.10/go.mod h1:ciOdJbw8hryjilsWjN0vhtF3ZbSfEKUd7wfzU0IZ2X8=
 github.com/ipthomas/tukcnst v1.2.11 h1:MXqpAt9J25GTle/QONFYb0OBOan9shBZPVhp2G+VH2Q=
 github.com/ipthomas/tukcnst v1.2.11/go.mod h1:ciOdJbw8hryjilsWjN0vhtF3ZbSfEKUd7wfzU0IZ2X8=
+github.com/ipthomas/tukcnst v1.2.12 h1:1CDtSgcntON5adX0+kDK7FDs6xaworqVS3A1XiefZoU=
+github.com/ipthomas/tukcnst v1.2.12/go.mod h1:ciOdJbw8hryjilsWjN0vhtF3ZbSfEKUd7wfzU0IZ2X8=
 github.com/ipthomas/tukhttp v1.2.0 h1:SFk0aBwyuviVbfSEkdFw+Oo5iptNkeQL1GwiEFg0Xk8=
 github.com/ipthomas/tukhttp v1.2.0/go.mod h1:9CzuoDPNOgX2drvm6wzz9mH/zqfwQqUCOPPMWIsC4cM=
 github.com/ipthomas/tukhttp v1.2.1 h1:zxakz9tXgL+KpMvt73eNP1iQXiwX7tpieEV3oW7WsUI=
@@ -28,6 +30,8 @@ github.com/ipthomas/tukhttp v1.2.8 h1:L5xvKabmYQDVbE99d5e6QVNrh+aF63eu+PeEcsMse0
 github.com/ipthomas/tukhttp v1.2.8/go.mod h1:AdLJDfe/h5FDVpwTVL5VrdVaUIlOUz0ehgXbNnkSlc8=
 github.com/ipthomas/tukhttp v1.2.9 h1:cwOI8hCxERJpWo+TsAK6jYs90da2hNG/qn9sds8iynU=
 github.com/ipthomas/tukhttp v1.2.9/go.mod h1:AdLJDfe/h5FDVpwTVL5VrdVaUIlOUz0ehgXbNnkSlc8=
+github.com/ipthomas/tukhttp v1.2.10 h1:UxZzKwLuDZ6Sh+xVcHVnwptPdKdAuseTQYgqtcWpuG4=
+github.com/ipthomas/tukhttp v1.2.10/go.mod h1:HWDrtUwakgrYIcwkOkoyBKC6Q5RHAwCGZN+R2JDLzL0=
 github.com/ipthomas/tukutil v1.2.0 h1:7kUYjFNmiQYlDxsZtF1+hhKElhCWQJummrIsZ8kGDSo=
 github.com/ipthomas/tukutil v1.2.0/go.mod h1:H+FbY5DrujILNrAUlXjC2eoKAzpQV+0GoOhTsQqFex8=
 github.com/ipthomas/tukutil v1.2.1 h1:JCjUgNKLQkOPdRAZC7G5on0ZowHXbYHT2oZNMeseAr4=
@@ -38,3 +42,5 @@ github.com/ipthomas/tukutil v1.2.3 h1:GyPuELTeQSmR+ilypuRWl9z7P7Dh3HqpPevsdD6ZgE
 github.com/ipthomas/tukutil v1.2.3/go.mod h1:9CxRQbriuzSO57l+xpcWPdlEbEI2uf+jlOYoIgrldDU=
 github.com/ipthomas/tukutil v1.2.4 h1:krbPqelk+JngkHSGFFdaiFHCuHtsp9dnrgUwqRu+CRE=
 github.com/ipthomas/tukutil v1.2.4/go.mod h1:9CxRQbriuzSO57l+xpcWPdlEbEI2uf+jlOYoIgrldDU=
+github.com/ipthomas/tukutil v1.2.5 h1:umNgDeI1RuxAMN0r608oVqhzEOhRK+ikmP/ZAjVCp/E=
+github.com/ipthomas/tukutil v1.2.5/go.mod h1:qrhVW8O1dIAeixAeimwJ3qS3z/xpxcPd2YyhD2JHYsw=

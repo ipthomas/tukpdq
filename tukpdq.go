@@ -1085,8 +1085,7 @@ func (i *PDQQuery) newCGLRequest() error {
 	}
 	err := tukhttp.NewRequest(&httpReq)
 	i.Request = []byte(i.Request)
-	i.Response, _ = json.MarshalIndent(httpReq.Response, "", "  ")
-	json.Unmarshal(httpReq.Response, &i.CGL_User)
+	i.Response = httpReq.Response
 	i.StatusCode = httpReq.StatusCode
 	return err
 }

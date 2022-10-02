@@ -6,6 +6,7 @@
 package tukcnst
 
 const (
+	QUERY_PARAM_INCLUDE             = "_include"
 	QUERY_PARAM_MRN_ID              = "mrnid"
 	QUERY_PARAM_MRN_OID             = "mrnoid"
 	QUERY_PARAM_NHS_ID              = "nhsid"

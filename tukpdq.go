@@ -933,8 +933,6 @@ func (i *PDQQuery) getPatient() error {
 								i.Response = []byte("true")
 							case "code":
 								i.Response = []byte("")
-							default:
-								i.Response = []byte("No Patient Found")
 							}
 						} else {
 							switch i.RspType {
@@ -1057,6 +1055,12 @@ func (i *PDQQuery) getPatient() error {
 						if i.Cache {
 							pat_cache[i.Used_PID] = i.Response
 							pdq_cache[i.Used_PID] = i.Patients
+						}
+						switch i.RspType {
+						case "bool":
+							i.Response = []byte("true")
+						case "code":
+							i.Response = []byte("")
 						}
 					} else {
 						switch i.RspType {

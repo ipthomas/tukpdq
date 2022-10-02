@@ -1116,6 +1116,9 @@ func (i *PDQQuery) newCGLRequest() error {
 	i.Request = []byte(i.Request)
 	i.Response = httpReq.Response
 	i.StatusCode = httpReq.StatusCode
+	if err != nil && httpReq.StatusCode == http.StatusOK {
+		json.Unmarshal(httpReq.Response, &i.CGL_User)
+	}
 	return err
 }
 func (i *PDQQuery) newTukHttpRequest() error {

@@ -1117,7 +1117,9 @@ func (i *PDQQuery) newCGLRequest() error {
 	i.Response = httpReq.Response
 	i.StatusCode = httpReq.StatusCode
 	if err != nil && httpReq.StatusCode == http.StatusOK {
-		json.Unmarshal(httpReq.Response, &i.CGL_User)
+		cgluser := CGL_User{}
+		json.Unmarshal(httpReq.Response, &cgluser)
+		i.CGL_User = cgluser
 	}
 	return err
 }

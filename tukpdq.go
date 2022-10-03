@@ -1011,7 +1011,17 @@ func (i *PDQQuery) setPatient() error {
 			}
 		}
 	case tukcnst.PDQ_SERVER_TYPE_IHE_PIXM:
-		if err = i.newPIXmRequest(); err == nil {
+		i.Request = []byte(i.Server_URL)
+		httpReq := tukhttp.PIXmRequest{
+			URL:     i.Server_URL,
+			PID_OID: i.Used_PID_OID,
+			PID:     i.Used_PID,
+			Timeout: i.Timeout,
+		}
+		err = tukhttp.NewRequest(&httpReq)
+		i.Response = httpReq.Response
+		i.StatusCode = httpReq.StatusCode
+		if err == nil {
 			if strings.Contains(string(i.Response), "Error") {
 				err = errors.New(string(i.Response))
 			} else {
@@ -1046,7 +1056,6 @@ func (i *PDQQuery) setPatient() error {
 									gn = gn + n + " "
 								}
 							}
-
 							tukpat.GivenName = strings.TrimSuffix(gn, " ")
 							tukpat.FamilyName = rsppat.Resource.Name[0].Family
 							tukpat.BirthDate = strings.ReplaceAll(rsppat.Resource.BirthDate, "-", "")
@@ -1078,19 +1087,6 @@ func (i *PDQQuery) setPatient() error {
 	if err != nil {
 		log.Println(err.Error())
 	}
-	return err
-}
-func (i *PDQQuery) newPIXmRequest() error {
-	httpReq := tukhttp.PIXmRequest{
-		URL:     i.Server_URL,
-		PID_OID: i.Used_PID_OID,
-		PID:     i.Used_PID,
-		Timeout: i.Timeout,
-	}
-	err := tukhttp.NewRequest(&httpReq)
-	i.Request = []byte(httpReq.URL)
-	i.Response = httpReq.Response
-	i.StatusCode = httpReq.StatusCode
 	return err
 }
 func (i *PDQQuery) newIHESOAPRequest(soapaction string) error {

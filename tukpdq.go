@@ -161,9 +161,8 @@ import (
 )
 
 type PDQQuery struct {
-	IHE_Server_Type string
+	Server_Mode     string
 	Server_URL      string
-	CGL_Server_URL  string
 	CGL_X_Api_Key   string
 	NHS_ID          string
 	NHS_OID         string
@@ -173,17 +172,19 @@ type PDQQuery struct {
 	REG_OID         string
 	Timeout         int64
 	Cache           bool
-	RspType         string
 	Used_PID        string
 	Used_PID_OID    string
 	Request         []byte
 	Response        []byte
 	StatusCode      int
 	Count           int
-	Patients        []PIXPatient
-	CGL_User        CGL_User
+	PDQv3Response   PDQv3Response
+	PIXv3Response   PIXv3Response
+	PIXmResponse    PIXmResponse
+	Patients        []TUKPatient
+	CGLUserResponse CGLUserResponse
 }
-type CGL_User struct {
+type CGLUserResponse struct {
 	Data struct {
 		Client struct {
 			BasicDetails struct {
@@ -815,7 +816,7 @@ type PIXmResponse struct {
 		} `json:"resource"`
 	} `json:"entry"`
 }
-type PIXPatient struct {
+type TUKPatient struct {
 	PIDOID     string `json:"pidoid"`
 	PID        string `json:"pid"`
 	REGOID     string `json:"regoid"`
@@ -839,7 +840,7 @@ type PDQInterface interface {
 
 var (
 	pat_cache = make(map[string][]byte)
-	pdq_cache = make(map[string][]PIXPatient)
+	pdq_cache = make(map[string][]TUKPatient)
 )
 
 func New_Transaction(i PDQInterface) error {
@@ -849,7 +850,7 @@ func (i *PDQQuery) pdq() error {
 	if err := i.setPDQ_ID(); err != nil {
 		return err
 	}
-	return i.getPatient()
+	return i.setPatient()
 }
 func (i *PDQQuery) setPDQ_ID() error {
 	if i.Server_URL == "" {
@@ -883,83 +884,75 @@ func (i *PDQQuery) setPDQ_ID() error {
 	}
 	return nil
 }
-func (i *PDQQuery) getPatient() error {
-	if i.Cache {
-		if cachepat, ok := pat_cache[i.Used_PID]; ok {
+func (i *PDQQuery) setPatient() error {
+	if i.Cache && i.Server_Mode != tukcnst.PDQ_SERVER_TYPE_CGL {
+		if _, ok := pat_cache[i.Used_PID]; ok {
 			log.Printf("Cache entry found for Patient ID %s", i.Used_PID)
 			i.StatusCode = http.StatusOK
+			i.Response = pat_cache[i.Used_PID]
 			i.Patients = pdq_cache[i.Used_PID]
 			i.Count = len(i.Patients)
-			switch i.RspType {
-			case "bool":
-				i.Response = []byte("true")
-			case "code":
-				i.Response = []byte("")
-			default:
-				i.Response = cachepat
-			}
 			return nil
 		}
 	}
 	var tmplt *template.Template
 	var err error
 	i.StatusCode = http.StatusOK
-	switch i.IHE_Server_Type {
+	switch i.Server_Mode {
 	case tukcnst.PDQ_SERVER_TYPE_CGL:
-		return i.newCGLRequest()
+		i.Request = []byte(i.Server_URL)
+		httpReq := tukhttp.CGLRequest{
+			Request:   i.Server_URL,
+			X_Api_Key: i.CGL_X_Api_Key,
+		}
+		if err = tukhttp.NewRequest(&httpReq); err == nil {
+			if err != nil && httpReq.StatusCode == http.StatusOK {
+				i.CGLUserResponse = CGLUserResponse{}
+				json.Unmarshal(httpReq.Response, &i.CGLUserResponse)
+				i.Count = 1
+			}
+		}
+		i.Response = httpReq.Response
+		i.StatusCode = httpReq.StatusCode
 	case tukcnst.PDQ_SERVER_TYPE_IHE_PIXV3:
 		if tmplt, err = template.New(tukcnst.PDQ_SERVER_TYPE_IHE_PIXV3).Funcs(tukutil.TemplateFuncMap()).Parse(tukcnst.GO_Template_PIX_V3_Request); err == nil {
 			var b bytes.Buffer
 			if err = tmplt.Execute(&b, i); err == nil {
 				i.Request = b.Bytes()
-				if err = i.newTukSOAPRequest(tukcnst.SOAP_ACTION_PIXV3_Request); err == nil {
-					pdqrsp := PIXv3Response{}
-					if err = xml.Unmarshal(i.Response, &pdqrsp); err == nil {
-						if pdqrsp.Body.PRPAIN201310UV02.Acknowledgement.TypeCode.Code != "AA" {
-							return errors.New("acknowledgement code not equal aa, received " + pdqrsp.Body.PRPAIN201310UV02.Acknowledgement.TypeCode.Code)
-						}
-						i.Count, _ = strconv.Atoi(pdqrsp.Body.PRPAIN201310UV02.ControlActProcess.QueryAck.ResultTotalQuantity.Value)
-						if i.Count > 0 {
-							pat := PIXPatient{
-								PIDOID: i.MRN_OID,
-								PID:    i.MRN_ID,
-								REGOID: i.REG_OID,
-								REGID:  i.REG_ID,
-								NHSOID: i.NHS_OID,
-								NHSID:  i.NHS_ID,
-							}
-							pat.GivenName = pdqrsp.Body.PRPAIN201310UV02.ControlActProcess.Subject.RegistrationEvent.Subject1.Patient.PatientPerson.Name.Given
-							pat.FamilyName = pdqrsp.Body.PRPAIN201310UV02.ControlActProcess.Subject.RegistrationEvent.Subject1.Patient.PatientPerson.Name.Family
-							for _, pid := range pdqrsp.Body.PRPAIN201310UV02.ControlActProcess.Subject.RegistrationEvent.Subject1.Patient.ID {
-								switch pid.Root {
-								case i.REG_OID:
-									i.REG_ID = pid.Extension
-								case i.NHS_OID:
-									i.NHS_ID = pid.Extension
-								case i.MRN_OID:
-									i.MRN_ID = pid.Extension
-								}
-							}
-							i.Patients = append(i.Patients, pat)
-							if i.Cache {
-								pat_cache[i.Used_PID] = i.Response
-								pdq_cache[i.Used_PID] = i.Patients
-							}
-							switch i.RspType {
-							case "bool":
-								i.Response = []byte("true")
-							case "code":
-								i.Response = []byte("")
-							}
+				if err = i.newIHESOAPRequest(tukcnst.SOAP_ACTION_PIXV3_Request); err == nil {
+					i.PIXv3Response = PIXv3Response{}
+					if err = xml.Unmarshal(i.Response, &i.PIXv3Response); err == nil {
+						if i.PIXv3Response.Body.PRPAIN201310UV02.Acknowledgement.TypeCode.Code != "AA" {
+							err = errors.New("acknowledgement code not equal aa, received " + i.PIXv3Response.Body.PRPAIN201310UV02.Acknowledgement.TypeCode.Code)
 						} else {
-							switch i.RspType {
-							case "bool":
-								i.Response = []byte("false")
-							case "code":
-								i.Response = []byte("")
-								i.StatusCode = http.StatusNoContent
-							default:
-								i.Response = []byte("No Patient Found")
+							i.Count, _ = strconv.Atoi(i.PIXv3Response.Body.PRPAIN201310UV02.ControlActProcess.QueryAck.ResultTotalQuantity.Value)
+							if i.Count > 0 {
+								pat := TUKPatient{
+									PIDOID: i.MRN_OID,
+									PID:    i.MRN_ID,
+									REGOID: i.REG_OID,
+									REGID:  i.REG_ID,
+									NHSOID: i.NHS_OID,
+									NHSID:  i.NHS_ID,
+								}
+								pat.GivenName = i.PIXv3Response.Body.PRPAIN201310UV02.ControlActProcess.Subject.RegistrationEvent.Subject1.Patient.PatientPerson.Name.Given
+								pat.FamilyName = i.PIXv3Response.Body.PRPAIN201310UV02.ControlActProcess.Subject.RegistrationEvent.Subject1.Patient.PatientPerson.Name.Family
+								for _, pid := range i.PIXv3Response.Body.PRPAIN201310UV02.ControlActProcess.Subject.RegistrationEvent.Subject1.Patient.ID {
+									switch pid.Root {
+									case i.REG_OID:
+										pat.REGID = pid.Extension
+									case i.NHS_OID:
+										pat.NHSID = pid.Extension
+									case i.MRN_OID:
+										pat.PID = pid.Extension
+										pat.PIDOID = i.MRN_OID
+									}
+								}
+								i.Patients = append(i.Patients, pat)
+								if i.Cache {
+									pat_cache[i.Used_PID] = i.Response
+									pdq_cache[i.Used_PID] = i.Patients
+								}
 							}
 						}
 					}
@@ -971,60 +964,46 @@ func (i *PDQQuery) getPatient() error {
 			var b bytes.Buffer
 			if err = tmplt.Execute(&b, i); err == nil {
 				i.Request = b.Bytes()
-				if err = i.newTukSOAPRequest(tukcnst.SOAP_ACTION_PDQV3_Request); err == nil {
-					pdqrsp := PDQv3Response{}
-					if err = xml.Unmarshal(i.Response, &pdqrsp); err == nil {
-						if pdqrsp.Body.PRPAIN201306UV02.Acknowledgement.TypeCode.Code != "AA" {
-							return errors.New("acknowledgement code not equal aa, received " + pdqrsp.Body.PRPAIN201306UV02.Acknowledgement.TypeCode.Code)
-						}
-						i.Count, _ = strconv.Atoi(pdqrsp.Body.PRPAIN201306UV02.ControlActProcess.QueryAck.ResultTotalQuantity.Value)
-						if i.Count > 0 {
-							pat := PIXPatient{
-								PIDOID:     i.MRN_OID,
-								PID:        i.MRN_ID,
-								REGOID:     i.REG_OID,
-								REGID:      i.REG_ID,
-								NHSOID:     i.NHS_OID,
-								NHSID:      i.NHS_ID,
-								GivenName:  pdqrsp.Body.PRPAIN201306UV02.ControlActProcess.Subject.RegistrationEvent.Subject1.Patient.PatientPerson.Name.Given,
-								FamilyName: pdqrsp.Body.PRPAIN201306UV02.ControlActProcess.Subject.RegistrationEvent.Subject1.Patient.PatientPerson.Name.Family,
-								Gender:     pdqrsp.Body.PRPAIN201306UV02.ControlActProcess.Subject.RegistrationEvent.Subject1.Patient.PatientPerson.AdministrativeGenderCode.Code,
-								BirthDate:  pdqrsp.Body.PRPAIN201306UV02.ControlActProcess.Subject.RegistrationEvent.Subject1.Patient.PatientPerson.BirthTime.Value,
-								Street:     pdqrsp.Body.PRPAIN201306UV02.ControlActProcess.Subject.RegistrationEvent.Subject1.Patient.PatientPerson.Addr.StreetAddressLine,
-								City:       pdqrsp.Body.PRPAIN201306UV02.ControlActProcess.Subject.RegistrationEvent.Subject1.Patient.PatientPerson.Addr.City,
-								State:      pdqrsp.Body.PRPAIN201306UV02.ControlActProcess.Subject.RegistrationEvent.Subject1.Patient.PatientPerson.Addr.State,
-								Zip:        pdqrsp.Body.PRPAIN201306UV02.ControlActProcess.Subject.RegistrationEvent.Subject1.Patient.PatientPerson.Addr.PostalCode,
-							}
-							for _, pid := range pdqrsp.Body.PRPAIN201306UV02.ControlActProcess.Subject.RegistrationEvent.Subject1.Patient.ID {
-								switch pid.Root {
-								case i.REG_OID:
-									i.REG_ID = pid.Extension
-								case i.NHS_OID:
-									i.NHS_ID = pid.Extension
-								case i.MRN_OID:
-									i.MRN_ID = pid.Extension
-								}
-							}
-							i.Patients = append(i.Patients, pat)
-							if i.Cache {
-								pat_cache[i.Used_PID] = i.Response
-								pdq_cache[i.Used_PID] = i.Patients
-							}
-							switch i.RspType {
-							case "bool":
-								i.Response = []byte("true")
-							case "code":
-								i.Response = []byte("")
-							}
+				if err = i.newIHESOAPRequest(tukcnst.SOAP_ACTION_PDQV3_Request); err == nil {
+					i.PDQv3Response = PDQv3Response{}
+					if err = xml.Unmarshal(i.Response, &i.PDQv3Response); err == nil {
+						if i.PDQv3Response.Body.PRPAIN201306UV02.Acknowledgement.TypeCode.Code != "AA" {
+							err = errors.New("acknowledgement code not equal aa, received " + i.PDQv3Response.Body.PRPAIN201306UV02.Acknowledgement.TypeCode.Code)
 						} else {
-							switch i.RspType {
-							case "bool":
-								i.Response = []byte("false")
-							case "code":
-								i.Response = []byte("")
-								i.StatusCode = http.StatusNoContent
-							default:
-								i.Response = []byte("No Patient Found")
+							i.Count, _ = strconv.Atoi(i.PDQv3Response.Body.PRPAIN201306UV02.ControlActProcess.QueryAck.ResultTotalQuantity.Value)
+							if i.Count > 0 {
+								pat := TUKPatient{
+									PIDOID:     i.MRN_OID,
+									PID:        i.MRN_ID,
+									REGOID:     i.REG_OID,
+									REGID:      i.REG_ID,
+									NHSOID:     i.NHS_OID,
+									NHSID:      i.NHS_ID,
+									GivenName:  i.PDQv3Response.Body.PRPAIN201306UV02.ControlActProcess.Subject.RegistrationEvent.Subject1.Patient.PatientPerson.Name.Given,
+									FamilyName: i.PDQv3Response.Body.PRPAIN201306UV02.ControlActProcess.Subject.RegistrationEvent.Subject1.Patient.PatientPerson.Name.Family,
+									Gender:     i.PDQv3Response.Body.PRPAIN201306UV02.ControlActProcess.Subject.RegistrationEvent.Subject1.Patient.PatientPerson.AdministrativeGenderCode.Code,
+									BirthDate:  i.PDQv3Response.Body.PRPAIN201306UV02.ControlActProcess.Subject.RegistrationEvent.Subject1.Patient.PatientPerson.BirthTime.Value,
+									Street:     i.PDQv3Response.Body.PRPAIN201306UV02.ControlActProcess.Subject.RegistrationEvent.Subject1.Patient.PatientPerson.Addr.StreetAddressLine,
+									City:       i.PDQv3Response.Body.PRPAIN201306UV02.ControlActProcess.Subject.RegistrationEvent.Subject1.Patient.PatientPerson.Addr.City,
+									State:      i.PDQv3Response.Body.PRPAIN201306UV02.ControlActProcess.Subject.RegistrationEvent.Subject1.Patient.PatientPerson.Addr.State,
+									Zip:        i.PDQv3Response.Body.PRPAIN201306UV02.ControlActProcess.Subject.RegistrationEvent.Subject1.Patient.PatientPerson.Addr.PostalCode,
+								}
+								for _, pid := range i.PDQv3Response.Body.PRPAIN201306UV02.ControlActProcess.Subject.RegistrationEvent.Subject1.Patient.ID {
+									switch pid.Root {
+									case i.REG_OID:
+										pat.REGID = pid.Extension
+									case i.NHS_OID:
+										pat.NHSID = pid.Extension
+									case i.MRN_OID:
+										pat.PID = pid.Extension
+										pat.PIDOID = i.MRN_OID
+									}
+								}
+								i.Patients = append(i.Patients, pat)
+								if i.Cache {
+									pat_cache[i.Used_PID] = i.Response
+									pdq_cache[i.Used_PID] = i.Patients
+								}
 							}
 						}
 					}
@@ -1032,18 +1011,18 @@ func (i *PDQQuery) getPatient() error {
 			}
 		}
 	case tukcnst.PDQ_SERVER_TYPE_IHE_PIXM:
-		if err = i.newTukHttpRequest(); err == nil {
+		if err = i.newPIXmRequest(); err == nil {
 			if strings.Contains(string(i.Response), "Error") {
 				err = errors.New(string(i.Response))
 			} else {
-				pdqrsp := PIXmResponse{}
-				if err := json.Unmarshal(i.Response, &pdqrsp); err == nil {
-					log.Printf("%v Patient Entries in Response", pdqrsp.Total)
-					i.Count = pdqrsp.Total
+				i.PIXmResponse = PIXmResponse{}
+				if err := json.Unmarshal(i.Response, &i.PIXmResponse); err == nil {
+					log.Printf("%v Patient Entries in Response", i.PIXmResponse.Total)
+					i.Count = i.PIXmResponse.Total
 					if i.Count > 0 {
-						for cnt := 0; cnt < len(pdqrsp.Entry); cnt++ {
-							rsppat := pdqrsp.Entry[cnt]
-							tukpat := PIXPatient{}
+						for cnt := 0; cnt < len(i.PIXmResponse.Entry); cnt++ {
+							rsppat := i.PIXmResponse.Entry[cnt]
+							tukpat := TUKPatient{}
 							for _, id := range rsppat.Resource.Identifier {
 								if id.System == tukcnst.URN_OID_PREFIX+i.REG_OID {
 									tukpat.REGID = id.Value
@@ -1091,22 +1070,6 @@ func (i *PDQQuery) getPatient() error {
 							pat_cache[i.Used_PID] = i.Response
 							pdq_cache[i.Used_PID] = i.Patients
 						}
-						switch i.RspType {
-						case "bool":
-							i.Response = []byte("true")
-						case "code":
-							i.Response = []byte("")
-						}
-					} else {
-						switch i.RspType {
-						case "bool":
-							i.Response = []byte("false")
-						case "code":
-							i.Response = []byte("")
-							i.StatusCode = http.StatusNoContent
-						default:
-							i.Response = []byte("No Patient Found")
-						}
 					}
 				}
 			}
@@ -1117,23 +1080,7 @@ func (i *PDQQuery) getPatient() error {
 	}
 	return err
 }
-func (i *PDQQuery) newCGLRequest() error {
-	httpReq := tukhttp.CGLRequest{
-		Request:   i.Server_URL,
-		X_Api_Key: i.CGL_X_Api_Key,
-	}
-	err := tukhttp.NewRequest(&httpReq)
-	i.Request = []byte(i.Request)
-	i.Response = httpReq.Response
-	i.StatusCode = httpReq.StatusCode
-	if err != nil && httpReq.StatusCode == http.StatusOK {
-		cgluser := CGL_User{}
-		json.Unmarshal(httpReq.Response, &cgluser)
-		i.CGL_User = cgluser
-	}
-	return err
-}
-func (i *PDQQuery) newTukHttpRequest() error {
+func (i *PDQQuery) newPIXmRequest() error {
 	httpReq := tukhttp.PIXmRequest{
 		URL:     i.Server_URL,
 		PID_OID: i.Used_PID_OID,
@@ -1146,7 +1093,7 @@ func (i *PDQQuery) newTukHttpRequest() error {
 	i.StatusCode = httpReq.StatusCode
 	return err
 }
-func (i *PDQQuery) newTukSOAPRequest(soapaction string) error {
+func (i *PDQQuery) newIHESOAPRequest(soapaction string) error {
 	httpReq := tukhttp.SOAPRequest{
 		URL:        i.Server_URL,
 		SOAPAction: soapaction,

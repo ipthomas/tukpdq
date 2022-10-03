@@ -930,6 +930,16 @@ func (i *PDQQuery) getPatient() error {
 							}
 							pat.GivenName = pdqrsp.Body.PRPAIN201310UV02.ControlActProcess.Subject.RegistrationEvent.Subject1.Patient.PatientPerson.Name.Given
 							pat.FamilyName = pdqrsp.Body.PRPAIN201310UV02.ControlActProcess.Subject.RegistrationEvent.Subject1.Patient.PatientPerson.Name.Family
+							for _, pid := range pdqrsp.Body.PRPAIN201310UV02.ControlActProcess.Subject.RegistrationEvent.Subject1.Patient.ID {
+								switch pid.Root {
+								case i.REG_OID:
+									i.REG_ID = pid.Extension
+								case i.NHS_OID:
+									i.NHS_ID = pid.Extension
+								case i.MRN_OID:
+									i.MRN_ID = pid.Extension
+								}
+							}
 							i.Patients = append(i.Patients, pat)
 							if i.Cache {
 								pat_cache[i.Used_PID] = i.Response

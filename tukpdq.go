@@ -906,7 +906,7 @@ func (i *PDQQuery) setPatient() error {
 			X_Api_Key: i.CGL_X_Api_Key,
 		}
 		if err = tukhttp.NewRequest(&httpReq); err == nil {
-			if err != nil && httpReq.StatusCode == http.StatusOK {
+			if httpReq.StatusCode == http.StatusOK {
 				json.Unmarshal(httpReq.Response, &i.CGLUserResponse)
 				i.Count = 1
 			}

@@ -14,6 +14,8 @@ github.com/ipthomas/tukcnst v1.3.3 h1:DCjCAAlCvAX0sWHv/SBPDuuvIV9YS7wnJrBkH4pt3z
 github.com/ipthomas/tukcnst v1.3.3/go.mod h1:ciOdJbw8hryjilsWjN0vhtF3ZbSfEKUd7wfzU0IZ2X8=
 github.com/ipthomas/tukcnst v1.3.4 h1:oXxo2QrzTkAG8XoJLKyG16BVdzDodPCIy3g5KKf8utk=
 github.com/ipthomas/tukcnst v1.3.4/go.mod h1:ciOdJbw8hryjilsWjN0vhtF3ZbSfEKUd7wfzU0IZ2X8=
+github.com/ipthomas/tukcnst v1.3.6 h1:tOx8U/phZdsNBD9ulWYM2OjYFxisJTgAnldQspYr6wg=
+github.com/ipthomas/tukcnst v1.3.6/go.mod h1:ciOdJbw8hryjilsWjN0vhtF3ZbSfEKUd7wfzU0IZ2X8=
 github.com/ipthomas/tukhttp v1.2.13 h1:m5ZVD0mqKomq8CX0TAuj7eE++/mvt6/yYLyTJZRxpIw=
 github.com/ipthomas/tukhttp v1.2.13/go.mod h1:DkPaRKLUSKec3YutOBstXVrmSZHMnMeEoj3yi/KoP3A=
 github.com/ipthomas/tukhttp v1.2.14 h1:jrLT2SDAogUQwSK7ZIjmexTX1bFgbzWwE6zN90V5ugE=
@@ -38,6 +40,8 @@ github.com/ipthomas/tukhttp v1.3.7 h1:T+I/p/8g2ghgrEMKVwbKtXHTMwbX2gqrRAYDqUDLqt
 github.com/ipthomas/tukhttp v1.3.7/go.mod h1:gP96rMw5787E5yk5hfKMRamxbQPuNidM0fCBZ/1//qo=
 github.com/ipthomas/tukhttp v1.3.8 h1:c0vlB/Dfmeun+vW5KH6jwLgLsbuq0Wz34uvbcJ1qPwI=
 github.com/ipthomas/tukhttp v1.3.8/go.mod h1:uf0AQ8gBG2Exm0OgXSJLFUcJ4Sg1WyplbeoMkiZvLUY=
+github.com/ipthomas/tukhttp v1.3.9 h1:qQCpOjjgULB+ZhN8Eso4d/jJln5THPQcNfkUt/pVOiM=
+github.com/ipthomas/tukhttp v1.3.9/go.mod h1:1iw8iaPSxCmmABBKSaXt0WXVXg/YP2VQR6uiuOYW+5g=
 github.com/ipthomas/tukutil v1.2.7 h1:kdkg/qeJU+5feM3i32osmT15joBkEAmxgQITxtVEWDs=
 github.com/ipthomas/tukutil v1.2.7/go.mod h1:9f338DybNfaGo7QAJLiTm+StKDz2uXltBWkbrVc/ta4=
 github.com/ipthomas/tukutil v1.2.8 h1:lWjrvgSFFvNhN9n6PuUtifPz+cjfQ5hyetpq69hUHtc=
@@ -62,3 +66,5 @@ github.com/ipthomas/tukutil v1.3.7 h1:thiBK8QYl2NU8clHuNaEUSqVZ2Aflb0rEZI3+mNiUn
 github.com/ipthomas/tukutil v1.3.7/go.mod h1:fOnuj36dTQReAAgAORW0ulT8dA/CoiVW+qbHjbW6dPI=
 github.com/ipthomas/tukutil v1.3.8 h1:B638EKGNuVekHT1aABI53lNTyVtMZXOJC7ouTpUI+to=
 github.com/ipthomas/tukutil v1.3.8/go.mod h1:fOnuj36dTQReAAgAORW0ulT8dA/CoiVW+qbHjbW6dPI=
+github.com/ipthomas/tukutil v1.3.9 h1:HXT4QvBTkgzqLGasLZ0TuUBWKz0fMX5QRtauv9Qiry0=
+github.com/ipthomas/tukutil v1.3.9/go.mod h1:jFcgJ2+neQwVUWgP2ACVgCExi+XDeK7a4NRzMOFhGI8=
